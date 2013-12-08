@@ -17,7 +17,7 @@ void setup() {
    // Setup Strips
   strip1.begin();
 
-  strip1.setBrightness(40); //Brightness out of 100
+  strip1.setBrightness(50); //Brightness out of 100
   strip2.setBrightness(50);
 }
 
@@ -51,11 +51,11 @@ void halfAndShow() {
       if (inputPercent > 0 && inputPercent >= changed){
       
       for (int i = 0; i < inputPercent; i++){
-       //for (int j = 0; j <= inputPercent; j++) {
+      // for (int j = 0; j <= inputPercent; j++) {
          strip1.setPixelColor(i, 255, 0, 255);
          strip1.show();       
+     }
      // }
-      }
        changed = inputPercent;
       
       }
@@ -64,20 +64,20 @@ void halfAndShow() {
       
       int m = strip1.numPixels() - inputPercent;
         for (int n = 0; n < m; n++){
-         strip1.setPixelColor(n, 0, 0, 0);
+         strip1.setPixelColor(n +1, 0, 0, 0);
          strip1.show();
         }
       
     for (int k = 0; k < inputPercent; k++){
-    // for (int l = 0; l <= inputPercent; l++) {
+   // for (int l = 0; l <= inputPercent; l++) {
          
-        strip1.setPixelColor(k, 0, 255, 0);
+        strip1.setPixelColor(k, 255,0 , 255);
         strip1.show();
         //Serial.print(k);
         
 
+   }
    // }
-    }
     }
     
     
