@@ -62,7 +62,7 @@ void halfAndShow() {
       
     else if (inputPercent < changed){
       
-      int m = strip1.numPixels() + 1;
+      int m = strip1.numPixels() - inputPercent;
         for (int n = 0; n < m; n++){
          strip1.setPixelColor(n, 0, 0, 0);
          strip1.show();
