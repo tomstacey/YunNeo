@@ -1,4 +1,4 @@
-YunNeo
+YunNeo aka Learnometer aka #LoM
 ======
 
 Adafruit Neopixels using the Arduino Yun
