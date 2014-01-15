@@ -14,7 +14,8 @@ Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(8, PIN9, NEO_GRB + NEO_KHZ800);
 
 // set some variables to deal with incoming percentage from GUI and a Grade value to be overlaid by flashing the LEDS
  
-int inputPercent = 0;
+int webInputValue1 = 0;
+int webInputValue2 = 0;
 int changed = 0;
 int grade = 0;
 int global_delay_count;
@@ -56,24 +57,24 @@ int getPercentFromSerial()
     char ch = Console.read();
     if( isDigit(ch) ) // is this an ascii digit between 0 and 9?
     {
-       inputPercent = (ch - '0');      // ASCII value converted to numeric value 
+       webInputValue1 = (ch - '0');      // ASCII value converted to numeric value 
     }
    }
-    return inputPercent;
+    return webInputValue1;
  }
 
 
 void showAmountStrip1()
 {
 int i;  
-  if(inputPercent == 0)
+  if(webInputValue1 == 0)
   {
       for (i = 0; i <=7; i++)
       {
         strip1.setPixelColor(i, 255, 255, 255);
       }    
   }
-  else if(inputPercent == 8)
+  else if(webInputValue1 == 8)
   {
 
       for (i = 0; i <=7; i++)
@@ -81,14 +82,14 @@ int i;
         strip1.setPixelColor(i, 255, 0, 255);
       }    
   }
-  else if (inputPercent >= 0 && inputPercent <= 8)
+  else if (webInputValue1 >= 0 && webInputValue1 <= 8)
  {
   
-      for (i = 0; i <=inputPercent-1; i++)
+      for (i = 0; i <= webInputValue1 -1; i++)
       {
         strip1.setPixelColor(i, 255, 0, 255);
       }  
-      for (i = inputPercent; i <= 7; i++)
+      for (i = webInputValue1; i <= 7; i++)
       {
         strip1.setPixelColor(i, 255, 255, 255);
       }  
