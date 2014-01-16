@@ -1,6 +1,7 @@
 #include <Adafruit_NeoPixel.h>
-#include <Console.h>
-
+#include <Bridge.h>
+#include <YunServer.h>
+#include <YunClient.h>
 
 //THIS VERSION IS: for Yun
 
@@ -13,56 +14,74 @@ Adafruit_NeoPixel strip1 = Adafruit_NeoPixel(8, PIN8, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(8, PIN9, NEO_GRB + NEO_KHZ800);
 
 // set some variables to deal with incoming percentage from GUI and a Grade value to be overlaid by flashing the LEDS
- 
+
 int webInputValue1 = 0;
 int webInputValue2 = 0;
 int changed = 0;
 int grade = 0;
 int global_delay_count;
+YunServer server;
 
 
 void setup() 
 {
-   // initialize serial
+   // initialize bridge
   Bridge.begin();
-  Console.begin();
    // Setup Strips
   strip1.begin();
 
-  strip1.setBrightness(10); //Brightness out of 100
+  strip1.setBrightness(1); //Brightness out of 100
   strip2.setBrightness(50);
   
-    while (!Console){
-    ; // wait for Console port to connect.
-  }
-  Console.println("You're connected to the Console!!!!");
-  
+  server.listenOnLocalhost();
+  server.begin();
 }
-  
+
 
 void loop() 
 {
-  strip1.show();
-  getPercentFromSerial();
-  showAmountStrip1();
- // flashGrade();
+  // Get clients coming from server
+  YunClient client = server.accept();
 
+  // There is a new client?
+  if (client) {
+    // Process request
+    process(client);
+
+    // Close connection and free resources.
+    client.stop();
+  }
+
+  delay(50); // Poll every 50ms
 }
 
-int getPercentFromSerial() 
-{
-  //serial stuff gets input from Console
-  if ( Console.available()) // Check to see if at least one character is available
-  {
-    char ch = Console.read();
-    if( isDigit(ch) ) // is this an ascii digit between 0 and 9?
-    {
-       webInputValue1 = (ch - '0');      // ASCII value converted to numeric value 
-    }
-   }
-    return webInputValue1;
- }
+void process(YunClient client) {
+  // read the command
+  String command = client.readStringUntil('/');
 
+  // Check for set
+  if (command == "set") {
+    set(client);
+  }
+}
+
+void set(YunClient client) {
+ int stripid;
+  // Read pin number
+  stripid = client.parseInt();
+
+  // If the next character is a '/' it means we have an URL
+  // with a value like: "/digital/13/1"
+  if (client.read() == '/') {
+    webInputValue1 = client.parseInt();
+    showAmountStrip1();
+  }
+  // Send feedback to client
+  client.print(F("Strip "));
+  client.print(stripid);
+  client.print(F(" set to "));
+  client.println(webInputValue1);
+}
 
 void showAmountStrip1()
 {
@@ -84,19 +103,20 @@ int i;
   }
   else if (webInputValue1 >= 0 && webInputValue1 <= 8)
  {
-  
+
       for (i = 0; i <= webInputValue1 -1; i++)
       {
         strip1.setPixelColor(i, 255, 0, 255);
+        delay(50);
+        strip1.show();
       }  
       for (i = webInputValue1; i <= 7; i++)
       {
         strip1.setPixelColor(i, 255, 255, 255);
       }  
 
- } 
- 
-     strip1.show();         
+ }
+     strip1.show();
 }
 
 
@@ -123,15 +143,3 @@ void flashGrade()
      strip1.show();     
 
 }
-
-
-
-
-
-   
-       
-
-    
-
-
-
